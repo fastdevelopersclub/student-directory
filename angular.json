@@ -50,7 +50,8 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "@flaticon/flaticon-uicons/css/all/all.css"
             ],
             "scripts": [],
             "server": "src/main.server.ts",
@@ -121,5 +122,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

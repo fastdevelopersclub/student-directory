@@ -51,7 +51,11 @@
             ],
             "styles": [
               "src/styles.css",
-              "@flaticon/flaticon-uicons/css/all/all.css"
+              {
+                "input": "@flaticon/flaticon-uicons/css/all/all.css",
+                "bundleName": "flaticon",
+                "inject": false
+              }
             ],
             "scripts": [],
             "server": "src/main.server.ts",

@@ -9,24 +9,29 @@ export const routes: Routes = [
       ),
   },
   {
-    path:'login',
+    path: 'login',
     loadComponent: () =>
-      import('./Pages/login/login.component').then(
-        (m) => m.LoginComponent
-      ),
+      import('./Pages/login/login.component').then((m) => m.LoginComponent),
   },
   {
-    path:'profile/:username',
+    path: 'profile/:username',
     loadComponent: () =>
       import('./Pages/profile/profile.component').then(
         (m) => m.ProfileComponent
       ),
   },
   {
-    path:'results',
+    path: 'results',
     loadComponent: () =>
       import('./Pages/search-results/search-results.component').then(
         (m) => m.SearchResultsComponent
       ),
-  }
+  },
+  {
+    path: '**',
+    loadComponent: () =>
+      import('./Pages/landing/landing.component').then(
+        (m) => m.LandingComponent
+      ),
+  },
 ];

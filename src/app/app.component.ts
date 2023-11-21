@@ -26,7 +26,7 @@ export class AppComponent implements OnInit{
     this.loadStyle("flaticon.css");
   }
 
-  async loadStyle(styleName: string) {
+  loadStyle(styleName: string) {
     const head = this.document.getElementsByTagName('head')[0];
 
     let themeLink = this.document.getElementById(

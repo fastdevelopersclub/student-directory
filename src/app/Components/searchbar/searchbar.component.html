@@ -1,0 +1,45 @@
+<div class="flex justify-center items-center mt-[-2.5rem]">
+    <div class="pl-10 relative z-10 bg-custom-dark-blue border-4 border-stone-200 p-1 inline-flex space-x-12 min-w-[800px]">
+        <!-- Search Bar -->
+        <div class="w-1/2 pb-4 border-white">
+            <label class="text-white block font-montserrat">Student Name</label>
+            <input type="text" placeholder="Search..." class="bg-custom-dark-blue text-white outline-none w-3/4 h-8 ">
+        </div>
+
+        <!-- First Dropdown -->
+        <div class="flex space-x-4">
+            <div class="pb-4 border-l-2 pl-4 border-white">
+                <label class="text-white block font-montserrat">Class Of</label>
+                <select class="bg-custom-dark-blue text-white outline-none w-32 h-8 px-2">
+                    <option value="option1">All Classes</option>
+                    <option value="option2">23</option>
+                    <option value="option2">22</option>
+                    <option value="option2">21</option>
+                    <option value="option2">20</option>
+                    <option value="option2">19</option>
+                    <option value="option2">18</option>
+                </select>
+            </div>
+
+            <!-- Second Dropdown -->
+            <div class="pb-4 pl-4 border-white">
+                <label class="text-white block font-montserrat">Programs</label>
+                <select class="bg-custom-dark-blue text-white outline-none w-32 h-8 px-2 font-montserrat">
+                    <option value="optionA">All Programs</option>
+                    <option value="optionB">Computer Science</option>
+                    <option value="optionC">Data Science</option>
+                    <option value="optionD">Artificial Intelligence</option>
+                    <option value="optionE">Cyber Security</option>
+                    <option value="optionF">Software Engineering</option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="flex justify-center items-center mb-5">
+    <!-- Search Button -->
+    <a (click)="searchresultpage()">
+        <button class="bg-custom-dark-blue text-white outline-none h-16 px-6 border-2 border-white rounded-full hover:border-blue-700 font-montserrat">Search</button>
+    </a>
+</div>

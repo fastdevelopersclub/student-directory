@@ -52,18 +52,18 @@
           src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg" loading="lazy"
           width="Auto" alt="" class="image-5">
         <div class="div-block-15">
-          <div class="text-block-16">Asad Ullah Shah</div>
-          <div class="text-block-17">Batch 2021</div>
-          <div class="text-block-18">BS Computer Science</div>
+          <div class="text-block-16" id="UName">Asad Ullah Shah</div>
+          <div class="text-block-17" id="UBatch">Batch 2021</div>
+          <div class="text-block-18" id="UProgram">BS Computer Science</div>
           <div class="div-block-16"></div>
           <div class="div-block-17"><img src="images/nuces_logo.png" loading="lazy" width="20" height="20" alt="">
-            <a href="#" class="text-block-15">i210545@nu.edu.pk</a>
+            <a href="#" class="text-block-15" id="UEmail">i210545@nu.edu.pk</a>
           </div>
           <div class="div-block-18"><img src="images/email.png" loading="lazy" alt="" height="20">
             <a href="#" class="text-block-15">asadullahshah002@gmail.com</a>
           </div>
           <div class="div-block-19"><img src="images/linkedin-1.png" loading="lazy" width="20" height="20" alt="">
-            <a href="#" class="text-block-15">LinkedIn Profile</a>
+            <a href="#" class="text-block-15" id="ULinkedIn">LinkedIn Profile</a>
           </div>
           <div class="div-block-19"><img src="images/github-1.png" loading="lazy" width="20" height="20" alt="">
             <a href="#" class="text-block-15">Github Profile</a>
@@ -82,7 +82,7 @@
         </div>
         <div class="div-block-20">
           <h2 class="heading">Mission Statement</h2>
-          <div class="text-block-19">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+          <div class="text-block-19" id="UMissionStatement">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
             incididunt ut labore et dolore magna aliqua. Placerat orci nulla pellentesque dignissim enim sit amet. Proin
             fermentum leo vel orci. Diam in arcu cursus euismod quis viverra. Diam maecenas ultricies mi eget mauris
             pharetra. Mauris nunc congue nisi vitae. Quisque egestas diam in arcu cursus euismod quis. Dui nunc mattis
@@ -95,17 +95,10 @@
           <h2 class="heading">Core Skills</h2>
           <div class="div-block-25">
             <div class="div-block-27">
-              <ul role="list">
+              <ul role="list" id="USkills">
                 <li class="list-item">UI/UX Design</li>
                 <li class="list-item">Full-Stack</li>
                 <li class="list-item">ML</li>
-              </ul>
-            </div>
-            <div class="div-block-26">
-              <ul role="list">
-                <li>MERN Stack</li>
-                <li>ASP.NET</li>
-                <li>PyMC</li>
               </ul>
             </div>
           </div>
@@ -226,7 +219,7 @@
       };
 
       // Prepare URL
-      var url = new URL('http://localhost:6001/retrieve-info');
+      var url = new URL('http://51.142.184.185:6001/retrieve-info');
       url.search = new URLSearchParams(payload).toString();
 
       // Fetch
@@ -244,7 +237,43 @@
           return response.json();
         })
         .then((data) => {
+
           console.log(data);
+
+          const MissionStatement = document.getElementById("UMissionStatement");
+          const Name = document.getElementById("UName");
+          const Batch = document.getElementById("UBatch");
+          const Program = document.getElementById("UProgram");
+          const Email = document.getElementById("UEmail");
+          const LinkedIn = document.getElementById("ULinkedIn");
+          const Skills = document.getElementById("USkills");
+
+          // Mission Statement
+          MissionStatement.innerText = data.AspirationStatement;
+
+          // Personal Data
+          Name.innerText = data.Name;
+          Batch.innerText = 'Batch ' + data.ClassOf;
+          Program.innerText = data.Program;
+
+          Email.innerText = data.Email;
+          Email.setAttribute("href","mailto:" + data.Email);
+
+          LinkedIn.innerHTML = data.Name;
+          LinkedIn.setAttribute("href", data.LinkedInURL);
+
+          // Skills
+          Skills.innerHTML = '';
+          for(skill of data.Skills)
+          {
+            let template = `<li class="list-item"> ` +  skill + `</li>`;
+            var parser = new DOMParser();
+            var newElement = parser.parseFromString(template, 'text/html').body.firstChild;
+            Skills.appendChild(newElement);
+          }
+
+
+
         })
         .catch(function (error) {
           // Handle Error on Get

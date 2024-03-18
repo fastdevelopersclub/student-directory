@@ -1,0 +1,8 @@
+flask
+flask_sqlalchemy
+flask_migrate
+flask_cors
+flask_limiter
+flask_compress
+flask_jwt_extended
+psycopg2-binary

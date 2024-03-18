@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  db:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+
+  db_api:
+    build:
+      context: ./db_api
+      dockerfile: ./Dockerfile
+    container_name: centraldb_api
+    expose:
+      - "6001"
+    ports:
+      - "6001:6001"
+    restart: always
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - migrations_volume:/app/migrations
+
+volumes:
+  postgres_data:
+  migrations_volume:
+    driver: local

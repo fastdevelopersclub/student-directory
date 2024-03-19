@@ -50,6 +50,8 @@
     <div class="w-layout-blockcontainer container-5 w-container">
       <div class="div-block-14"><img
           src="" loading="lazy"
+      <div class="div-block-14"><img id="ProfileImage"
+          src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg" loading="lazy"
           width="Auto" alt="" class="image-5">
         <div class="div-block-15">
           <div class="text-block-16" id="UName"></div>
@@ -135,7 +137,7 @@
             </div>
           </div>
         </div>
-        <div class="div-block-20-copy-edit">
+        <div class="div-block-20-copy-edit" id="FinalYearProject">
           <h2 class="heading">Final Year Project</h2>
           <h3>Project Title</h3>
           <div class="text-block-21">Lorem Ipsum</div>
@@ -235,6 +237,8 @@
           const Skills = document.getElementById("USkills");
           const AcademicAwards = document.getElementById("AcademicAwards");
           const Experiencelist = document.getElementById("Experience-list");
+          const FinalYearProject = document.getElementById("FinalYearProject");
+          const ProfileImage = document.getElementById("ProfileImage");
 
           // Mission Statement
           MissionStatement.innerText = data.AspirationStatement;
@@ -249,6 +253,9 @@
 
           LinkedIn.innerHTML = data.Name;
           LinkedIn.setAttribute("href", data.LinkedInURL);
+
+          ProfileImage.src = data.ProfilePictureURL;
+
 
           // Skills
           Skills.innerHTML = '';
@@ -284,6 +291,31 @@
             var newElement = parser.parseFromString(template, 'text/html').body.firstChild;
             Experiencelist.appendChild(newElement);
             
+          }
+
+          // Final Year Project
+          FinalYearProject.innerHTML = '';
+          {
+            const FYP = data.FinalYearProject;
+            let startdate = new Date(Date.parse(FYP.StartDate));
+            let enddate = new Date(Date.parse(FYP.EndDate));
+            let template = `
+              <h2 class="heading">Final Year Project</h2>
+              <h3>${ FYP.Title }</h3>
+            <div class="text-block-21"> <a href="${ FYP.ProjectURL }">Project Link</a> </div>
+            <h3>Project Description</h3>
+            <div class="text-block-20">${ FYP.Description }</div>
+            <h3>Project Images/Documents</h3>
+            <div class="div-block-32">
+              
+              
+              </div>`;
+
+              template.concat(`</div>`);
+            
+            var parser = new DOMParser();
+            var newElement = parser.parseFromString(template, 'text/html').body;
+            FinalYearProject.appendChild(newElement);
           }
 
         })

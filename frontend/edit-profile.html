@@ -275,18 +275,19 @@
     document.addEventListener('DOMContentLoaded', function(event) {
       const MissionForm = document.getElementById('wf-form-Profile-Form---Mission-Statement');
       const SkillsForm = document.getElementById("wf-form-Profile-Form---Core-Skills");
+      const Name = document.getElementById("name").value;
 
       MissionForm.addEventListener('submit', (e)=> {
         e.preventDefault();
 
-        let MissionStatement = document.getElementById("Mission-Statement");
+        let MissionStatement = document.getElementById("Mission-Statement").value;
 
         const payload = {
+          full_name: Name,
           aspiration_statement: MissionStatement
         };
 
         const authToken = sessionStorage.getItem("accessToken");
-        console.log(authToken);
         
         // URL of the endpoint to PATCH
         const url = 'http://51.142.184.185:6001/profile';
@@ -302,14 +303,13 @@
         };
 
         fetch(url, options).then(response => {
-          console.log(response);
           if (!response.ok) {
             throw new Error('Network response was not ok ' + response.statusText);
           }
           return response.json(); // Parse the JSON response
         })
         .then(data => {
-          console.log(data);
+          // Handle Success
         })
         .catch(error => {
           alert('Error during login: ' + error.message);

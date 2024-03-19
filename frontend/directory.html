@@ -237,12 +237,12 @@
 
             // card template to dynamically create
             let template = `
-              <div class="div-block-8">
+              <a class="div-block-8" href="./profile.html?id=${data[item].user_id}" style="text-decoration:none">
                 <img src="https://d3e54v103j8qbb.cloudfront.net/plugins/Basic/assets/placeholder.60f9b1840c.svg" loading="lazy" alt="" class="image-2">
                 <div class="div-block-9">` + name + `</div>
                 <div class="text-block-24">` + batch + `</div>
                 <div class="text-block-24">` + Program + `</div>
-              </div>`;
+              </a>`;
 
             // Convert the string to a DOM element
             var parser = new DOMParser();

@@ -198,7 +198,6 @@ def retrieve_info():
     skills = Skill.query.join(UserSkill).filter(UserSkill.user_id == user_id).all()
     skill_list = [skill.skill_name for skill in skills]
     
-    achievement = Achievement.query.filter_by(user_id=user_id).first()
     project = FinalYearProject.query.filter_by(user_id=user_id).first()
     
     response = {
@@ -214,9 +213,25 @@ def retrieve_info():
         'ProjectDetails': project.title if project else None,
         'ProjectImages': project.images if project else None,
         'Experience': achievement.description if achievement else None,
-        'Email': User.query.get(user_id).email
+        'Email': User.query.get(user_id).email,
+        'Achievements': [],
+        'FinalYearProject': {
+            'Title': project.title if project else None,
+            'Description': project.description if project else None,
+            'StartDate': project.start_date if project else None,
+            'EndDate': project.end_date if project else None,
+            'ProjectURL': project.project_url if project else None,
+            'Images': project.images if project else None
+        }
     }
     
+    achievements = Achievement.query.filter_by(user_id=user_id).all()
+    for achievement in achievements:
+        response['Achievements'].append({
+            'Title': achievement.title,
+            'Description': achievement.description,
+            'DateAchieved': achievement.date_achieved
+        })
     return jsonify(response), 200
 
 @app.route('/skills', methods=['POST'])
@@ -484,7 +499,7 @@ def add_final_year_project():
     db.session.add(final_year_project)
     db.session.commit()
     
-    return 
+    return jsonify({'message': 'Project added successfully'}), 200
 
 @app.route('/final-year-project/<int:project_id>', methods=['PATCH'])
 @jwt_required()
@@ -510,7 +525,7 @@ def update_final_year_project(project_id):
     final_year_project.images = images
     db.session.commit()
     
-    return 
+    return jsonify({'message': 'Project updated successfully'}), 200
 
 @app.route('/final-year-project/<int:project_id>', methods=['DELETE'])
 @jwt_required()
@@ -524,7 +539,7 @@ def delete_final_year_project(project_id):
     db.session.delete(final_year_project)
     db.session.commit()
     
-    return 
+    return jsonify({'message': 'Project deleted successfully'}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6001, debug=True)

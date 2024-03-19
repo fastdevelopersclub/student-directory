@@ -105,7 +105,7 @@
         </div>
         <div class="div-block-20-copy-edit">
           <h2 class="heading">Academic Awards</h2>
-          <ul role="list">
+          <ul role="list" id="AcademicAwards">
             <li class="list-item">Dean&#x27;s Honors List - 2021</li>
           </ul>
         </div>
@@ -211,7 +211,6 @@
 
       // Get specific parameter values
       const id = urlParams.get('id');
-      console.log(id);
 
       // Send Id as parameters
       const payload = {
@@ -247,6 +246,7 @@
           const Email = document.getElementById("UEmail");
           const LinkedIn = document.getElementById("ULinkedIn");
           const Skills = document.getElementById("USkills");
+          const AcademicAwards = document.getElementById("AcademicAwards");
 
           // Mission Statement
           MissionStatement.innerText = data.AspirationStatement;
@@ -272,7 +272,16 @@
             Skills.appendChild(newElement);
           }
 
-
+          // Academic Awards
+          AcademicAwards.innerHTML = '';
+          for(award of data.Achievements)
+          {
+            let date = new Date(Date.parse(award.DateAchieved));
+            let template = `<li class="list-item">${ award.Title } - ${ date.getFullYear() }</li>`;
+            var parser = new DOMParser();
+            var newElement = parser.parseFromString(template, 'text/html').body.firstChild;
+            AcademicAwards.appendChild(newElement);
+          }
 
         })
         .catch(function (error) {
@@ -283,8 +292,12 @@
 
     window.onload = function () {
       // Check if the request method is GET
-      if (window.location.search.includes("?")) {
+      var urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.has("id")) {
         handleGetRequest();
+      }
+      else{
+        window.location.href = "directory.html";
       }
     };
   </script>

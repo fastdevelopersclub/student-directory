@@ -210,11 +210,11 @@ def retrieve_info():
         'AspirationStatement': profile.aspiration_statement,
         'LinkedInURL': profile.linkedin_url,
         'ResumeURL': profile.resume_url,
+        'Achievements': [],
         'ProjectDetails': project.title if project else None,
         'ProjectImages': project.images if project else None,
         'Experience': achievement.description if achievement else None,
         'Email': User.query.get(user_id).email,
-        'Achievements': [],
         'FinalYearProject': {
             'Title': project.title if project else None,
             'Description': project.description if project else None,

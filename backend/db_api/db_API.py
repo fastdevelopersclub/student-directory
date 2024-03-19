@@ -63,6 +63,17 @@ class UserSkill(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     skill_id = db.Column(db.Integer, db.ForeignKey('skill.id'), primary_key=True)
 
+class Experience(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    title = db.Column(db.String(255), nullable=False)
+    description = db.Column(db.Text)
+    start_date = db.Column(db.Date)
+    end_date = db.Column(db.Date)
+
+    user = db.relationship('User', backref=db.backref('experiences', lazy=True))
+
+
 class Achievement(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -199,7 +210,27 @@ def retrieve_info():
     skill_list = [skill.skill_name for skill in skills]
     
     project = FinalYearProject.query.filter_by(user_id=user_id).first()
+
+    achievements_list = []
     
+
+    achievements = Achievement.query.filter_by(user_id=user_id).all()
+    for achievement in achievements:
+        achievements_list.append({
+            'Title': achievement.title,
+            'Description': achievement.description,
+            'DateAchieved': achievement.date_achieved
+        })
+
+        # NEW: Query for experiences
+    experiences = Experience.query.filter_by(user_id=user_id).all()
+    experience_list = [{
+        'Title': exp.title,
+        'Description': exp.description,
+        'StartDate': exp.start_date.isoformat() if exp.start_date else None,
+        'EndDate': exp.end_date.isoformat() if exp.end_date else None,
+    } for exp in experiences]
+
     response = {
         'Name': profile.full_name,
         'ProfilePictureURL': profile.profile_picture_url,
@@ -210,10 +241,10 @@ def retrieve_info():
         'AspirationStatement': profile.aspiration_statement,
         'LinkedInURL': profile.linkedin_url,
         'ResumeURL': profile.resume_url,
-        'Achievements': [],
+        'Achievements': achievements_list,
         'ProjectDetails': project.title if project else None,
         'ProjectImages': project.images if project else None,
-        'Experience': achievement.description if achievement else None,
+        'Experiences': experience_list,  # Include the experiences in the response
         'Email': User.query.get(user_id).email,
         'FinalYearProject': {
             'Title': project.title if project else None,
@@ -225,21 +256,12 @@ def retrieve_info():
         }
     }
     
-    achievements = Achievement.query.filter_by(user_id=user_id).all()
-    for achievement in achievements:
-        response['Achievements'].append({
-            'Title': achievement.title,
-            'Description': achievement.description,
-            'DateAchieved': achievement.date_achieved
-        })
+
+
     return jsonify(response), 200
 
 @app.route('/skills', methods=['POST'])
-@jwt_required()
 def add_skill():
-    current_user = get_jwt_identity()
-    if current_user != 'admin@sudo':
-        return jsonify({'error': 'Unauthorized access'}), 401
     
     data = request.json
     skill_name = data.get('skill_name')
@@ -256,15 +278,14 @@ def add_skill():
     
     return jsonify({'message': 'Skill added successfully'}), 201
 
-@app.route('/skills/<int:skill_id>', methods=['PATCH'])
-@jwt_required()
-def update_skill(skill_id):
-    current_user = get_jwt_identity()
-    if current_user != 'admin@sudo':
-        return jsonify({'error': 'Unauthorized access'}), 401
-    
+@app.route('/skills/update', methods=['POST'])
+def update_skill():
     data = request.json
+    skill_id = data.get('skill_id')
     skill_name = data.get('skill_name')
+    
+    if not skill_id:
+        return jsonify({'error': 'Skill ID is required'}), 400
     if not skill_name:
         return jsonify({'error': 'Skill name is required'}), 400
     
@@ -277,12 +298,13 @@ def update_skill(skill_id):
     
     return jsonify({'message': 'Skill updated successfully'}), 200
 
-@app.route('/skills/<int:skill_id>', methods=['DELETE'])
-@jwt_required()
-def delete_skill(skill_id):
-    current_user = get_jwt_identity()
-    if current_user != 'admin@sudo':
-        return jsonify({'error': 'Unauthorized access'}), 401
+@app.route('/skills/delete', methods=['DELETE'])
+def delete_skill():
+    data = request.json
+    skill_id = data.get('skill_id')
+    
+    if not skill_id:
+        return jsonify({'error': 'Skill ID is required'}), 400
     
     skill = Skill.query.get(skill_id)
     if not skill:
@@ -292,6 +314,7 @@ def delete_skill(skill_id):
     db.session.commit()
     
     return jsonify({'message': 'Skill deleted successfully'}), 200
+
 
 @app.route('/skills', methods=['GET'])
 def get_all_skills():
@@ -540,6 +563,66 @@ def delete_final_year_project(project_id):
     db.session.commit()
     
     return jsonify({'message': 'Project deleted successfully'}), 200
+
+@app.route('/user/experiences', methods=['POST'])
+@jwt_required()
+def add_experience():
+    current_user_id = get_jwt_identity()
+    data = request.json
+    new_experience = Experience(
+        user_id=current_user_id,
+        title=data['title'],
+        description=data['description'],
+        start_date=data.get('start_date'),
+        end_date=data.get('end_date')
+    )
+    db.session.add(new_experience)
+    db.session.commit()
+    return jsonify({'message': 'Experience added successfully', 'id': new_experience.id}), 201
+
+@app.route('/user/experiences', methods=['GET'])
+@jwt_required()
+def get_experiences():
+    current_user_id = get_jwt_identity()
+    experiences = Experience.query.filter_by(user_id=current_user_id).all()
+    experiences_data = [{
+        'id': exp.id,
+        'title': exp.title,
+        'description': exp.description,
+        'start_date': exp.start_date,
+        'end_date': exp.end_date
+    } for exp in experiences]
+    return jsonify(experiences_data), 200
+
+@app.route('/user/experiences/<int:exp_id>', methods=['PATCH'])
+@jwt_required()
+def update_experience(exp_id):
+    current_user_id = get_jwt_identity()
+    data = request.json
+    experience = Experience.query.filter_by(id=exp_id, user_id=current_user_id).first()
+    if not experience:
+        return jsonify({'error': 'Experience not found'}), 404
+    
+    experience.title = data.get('title', experience.title)
+    experience.description = data.get('description', experience.description)
+    experience.start_date = data.get('start_date', experience.start_date)
+    experience.end_date = data.get('end_date', experience.end_date)
+    db.session.commit()
+    return jsonify({'message': 'Experience updated successfully'}), 200
+
+@app.route('/user/experiences/<int:exp_id>', methods=['DELETE'])
+@jwt_required()
+def delete_experience(exp_id):
+    current_user_id = get_jwt_identity()
+    experience = Experience.query.filter_by(id=exp_id, user_id=current_user_id).first()
+    if not experience:
+        return jsonify({'error': 'Experience not found'}), 404
+    
+    db.session.delete(experience)
+    db.session.commit()
+    return jsonify({'message': 'Experience deleted successfully'}), 200
+
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=6001, debug=True)

@@ -17,10 +17,10 @@ docker-compose down -v
 ```
 curl -X POST \
 -H "Content-Type: application/json" \
--d '{"email": "i211680@nu.edu.pk", "password": "password123"}' \
+-d '{"email": "i211682@nu.edu.pk", "password": "password123"}' \
 http://51.142.184.185:6001/register
 
-ACCESS_TOKEN=$(curl -X POST -H "Content-Type: application/json" -d '{"email": "i211680@nu.edu.pk", "password": "password123"}' http://51.142.184.185:6001/login | jq -r '.token')
+ACCESS_TOKEN=$(curl -X POST -H "Content-Type: application/json" -d '{"email": "i211682@nu.edu.pk", "password": "password123"}' http://51.142.184.185:6001/login | jq -r '.token')
 
 curl -X GET \
 -H "Authorization: Bearer $ACCESS_TOKEN" \
@@ -61,4 +61,34 @@ curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer <acce
 curl -X PATCH -H "Content-Type: application/json" -H "Authorization: Bearer <access_token>" -d '{"title": "<title>", "description": "<description>", "start_date": "<start_date>", "end_date": "<end_date>", "project_url": "<project_url>", "images": "<images>"}' http://51.142.184.185:6001/final-year-project/<project_id>
 
 curl -X DELETE -H "Authorization: Bearer <access_token>" http://51.142.184.185:6001/final-year-project/<project_id>
+
+curl -X POST http://51.142.184.185:6001/user/experiences \
+-H "Authorization: Bearer $ACCESS_TOKEN" \
+-H "Content-Type: application/json" \
+-d '{
+    "title": "Full Stack Developer",
+    "description": "Developing full stack application for a startup company",
+    "start_date": "2022-05-01",
+    "end_date": "2022-05-03"
+}'
+
+
+curl -X PATCH http://51.142.184.185:6001/user/experiences/<experience_id> \
+-H "Authorization: Bearer $ACCESS_TOKEN" \
+-H "Content-Type: application/json" \
+-d '{
+    "title": "Updated Title",
+    "description": "Updated description",
+    "start_date": "2022-01-01",
+    "end_date": "2022-06-30"
+}'
+
+curl -X GET http://51.142.184.185:6001/user/experiences \
+-H "Authorization: Bearer $ACCESS_TOKEN"
+
+
+curl -X DELETE http://51.142.184.185:6001/user/experiences/<experience_id> \
+-H "Authorization: Bearer $ACCESS_TOKEN"
+
+```
 ```

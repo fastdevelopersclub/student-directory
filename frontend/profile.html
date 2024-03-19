@@ -111,10 +111,12 @@
         </div>
         <div class="div-block-20-copy-edit">
           <h2 class="heading">Experience</h2>
-          <h3>Internship</h3>
-          <ul role="list">
-            <li class="list-item">Fauji Fertilizer - 2023</li>
-          </ul>
+          <div>
+            <h3>Internship</h3>
+            <ul role="list" id="Experience-list">
+              <li class="list-item">Fauji Fertilizer - 2023</li>
+            </ul>
+          </div>
         </div>
         <div class="div-block-20-copy-edit">
           <h2 class="heading">Projects</h2>
@@ -247,6 +249,7 @@
           const LinkedIn = document.getElementById("ULinkedIn");
           const Skills = document.getElementById("USkills");
           const AcademicAwards = document.getElementById("AcademicAwards");
+          const Experiencelist = document.getElementById("Experience-list");
 
           // Mission Statement
           MissionStatement.innerText = data.AspirationStatement;
@@ -281,6 +284,21 @@
             var parser = new DOMParser();
             var newElement = parser.parseFromString(template, 'text/html').body.firstChild;
             AcademicAwards.appendChild(newElement);
+          }
+
+          // Experience List
+          Experiencelist.innerHTML = '';
+          for(item of data.Experiences)
+          {
+            let startdate = new Date(Date.parse(item.StartDate));
+            let enddate = new Date(Date.parse(item.EndDate));
+            const template = `
+              <li class="list-item"> <div style="display: flex;flex-direction: row;justify-content: space-between;"> <p>${ item.Title }</p>  <p> ${ startdate.getFullYear() } - ${ enddate.getFullYear() } </p></div> <p>${ item.Description }</p> </li>`;
+
+            var parser = new DOMParser();
+            var newElement = parser.parseFromString(template, 'text/html').body.firstChild;
+            Experiencelist.appendChild(newElement);
+            
           }
 
         })
